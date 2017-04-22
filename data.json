@@ -1,0 +1,82 @@
+{
+  "seller": {
+    "tasks": [
+      {
+        "taskId": "ATM1",
+        "deviceNo": 0,
+        "deviceName": "设备1",
+        "devType": "Central African Republic",
+        "belongPerson": "王甜莉",
+        "address": "XX街道",
+        "username": "wtl",
+        "state": "1",
+        "location": "355.00，222.73",
+        "orgnization": "02H999",
+        "orgName": "A支行",
+        "avatar": "http://static.galileo.xiaojukeji.com/static/tms/default_header.png"
+      },
+      {
+        "taskId": "摄像头12",
+        "deviceNo": 0,
+        "deviceName": "设备2",
+        "devType": "Central African Republic",
+        "belongPerson": "王甜莉",
+        "address": "XX街道",
+        "username": "wtl",
+        "state": "0",
+        "location": "355.00，222.73",
+        "orgnization": "02H999",
+        "orgName": "A支行",
+        "avatar": "http://static.galileo.xiaojukeji.com/static/tms/default_header.png"
+      },
+      {
+        "taskId": 34323424,
+        "deviceNo": 0,
+        "deviceName": "设备2",
+        "devType": "Central African Republic",
+        "belongPerson": "王甜莉",
+        "address": "XX街道",
+        "username": "wtl",
+        "state": "1",
+        "location": "355.00，222.73",
+        "orgnization": "02H999",
+        "orgName": "A支行",
+        "avatar": "http://static.galileo.xiaojukeji.com/static/tms/default_header.png"
+      },
+      {
+        "taskId": 123456,
+        "deviceNo": 0,
+        "deviceName": "设备2",
+        "devType": "Central African Republic",
+        "belongPerson": "王甜莉",
+        "address": "XX街道",
+        "username": "wtl",
+        "state": "0",
+        "location": "355.00，222.73",
+        "orgnization": "02H999",
+        "orgName": "A支行",
+        "avatar": "http://static.galileo.xiaojukeji.com/static/tms/default_header.png"
+      },
+      {
+        "taskId": 123456,
+        "deviceNo": 0,
+        "deviceName": "设备2",
+        "devType": "Central African Republic",
+        "belongPerson": "王甜莉",
+        "address": "XX街道",
+        "username": "wtl",
+        "state": "0",
+        "location": "355.00，222.73",
+        "orgnization": "02H999",
+        "orgName": "A支行",
+        "avatar": "http://static.galileo.xiaojukeji.com/static/tms/default_header.png"
+      }
+    ]
+  },
+  "pathRoute": [
+    [116.399, 39.910],
+    [116.405, 39.920],
+    [116.420, 39.930],
+    [116.416908, 39.908206]
+  ]
+}
