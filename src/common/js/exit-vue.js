@@ -5,7 +5,46 @@ import {
 
 export default{
     install(Vue){
-
+        // Vue.prototype.$id = JSON.parse(sessionStorage.getItem('wx_info')).openid
+      // 向Vue对象上添加方法，保存popup值
+        Vue.prototype.savePopup = (value) => {
+          //如果存在-新增，否则-创建
+            if(sessionStorage.getItem('popupArr')){
+              let tempArr = JSON.parse(sessionStorage.getItem('popupArr'))
+              tempArr.push(value)
+              sessionStorage.setItem('popupArr',JSON.stringify(tempArr))
+            }else{
+              let arr = [value]
+              sessionStorage.setItem('popupArr',JSON.stringify(arr))
+            }
+        },
+        Vue.prototype.removePopup = () =>{
+          if(sessionStorage.getItem('popupArr')){
+              let tempArr = JSON.parse(sessionStorage.getItem('popupArr'))
+              tempArr.pop()
+              sessionStorage.setItem('popupArr',JSON.stringify(tempArr))
+            }
+        },
+        Vue.prototype.back=()=>{
+            history.back()
+        },
+        //字符串到head位置以及从end开始不遮盖，中间变为*，
+        //若head到了end位置之后，则return value
+        Vue.prototype.starcover=(value,start,end)=>{
+            if(start+end>value.length){
+                return value
+            }else{
+                if(start<0){start = 0}
+                if(end<0){end = 0}
+                let arrl = value.substr(0,start)
+                let arr2 = value.substr(value.length-end)
+                let arr3 = ''
+                for(let i = 0;i<value.length-(start+end);i++){
+                    arr3+='*'
+                }
+                return arrl+arr3+arr2
+            }
+        }
         // 存储错误信息格式:{"bindcard":{"bindError":"验证码错误"}}
         // 规则：如果没有则创建，有就更新
         Vue.prototype.setMsg=(url,name,msg)=>{
@@ -28,29 +67,6 @@ export default{
                 return null;
             }
         }
-
-        // Vue.prototype.$id = JSON.parse(sessionStorage.getItem('wx_info')).openid
-    	// 向Vue对象上添加方法，保存popup值
-        Vue.prototype.savePopup = (value) => {
-        	//如果存在-新增，否则-创建
-            if(sessionStorage.getItem('popupArr')){
-            	let tempArr = JSON.parse(sessionStorage.getItem('popupArr'))
-            	tempArr.push(value)
-            	sessionStorage.setItem('popupArr',JSON.stringify(tempArr))
-            }else{
-            	let arr = [value]
-            	sessionStorage.setItem('popupArr',JSON.stringify(arr))
-            }
-        },
-        Vue.prototype.removePopup = () =>{
-        	if(sessionStorage.getItem('popupArr')){
-            	let tempArr = JSON.parse(sessionStorage.getItem('popupArr'))
-            	tempArr.pop()
-            	sessionStorage.setItem('popupArr',JSON.stringify(tempArr))
-            }
-        },
-
-
 
         // 回到顶部按钮
         Vue.prototype.backToTop = () => {
@@ -189,6 +205,13 @@ export default{
                 }else{
                     location.href=BIND_PATH
                 }
+            }
+        }
+
+        //点击获取更多活动
+        Vue.prototype.getMoreActivity=(params)=>{
+            if(params.link_url!=''){
+                location.href=params.link_url
             }
         }
 

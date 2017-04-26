@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="subroute">
     <transition name="fade">
       <router-view class="child-view"></router-view>
     </transition>
@@ -7,25 +7,14 @@
 </template>
 
 <script type="text/ecmascript-6">
-import vheader from './components/header/header';
-import valert from './components/common/alert';
+import vheader from '../header/header';
+import valert from '../common/alert';
 import { mapGetters } from 'vuex';
 
 export default {
   data() {
     return {
     };
-  },
-  mounted(){
-    // this.getPath();
-  },
-  methods: {
-    /*getPath () {
-        if (this.$route.name === undefined)
-        {
-          this.$router.push('menuList');
-        }
-    }*/
   },
   computed: {
     ...mapGetters([
@@ -41,7 +30,7 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-  .com-app
+  .subroute
     position: relative
   .child-view
     position: absolute

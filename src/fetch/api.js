@@ -6,7 +6,7 @@ import * as _ from '../util/tool'
 // axios 配置
 axios.defaults.timeout = 5000;
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
-axios.defaults.baseURL = '你的接口地址';
+axios.defaults.baseURL = 'http://ipqc.seuic.info/basic/web/smart_security/public/index.php/api/';
 
 //POST传参序列化
 axios.interceptors.request.use((config) => {
@@ -35,8 +35,10 @@ export function fetch(url, params) {
     return new Promise((resolve, reject) => {
         axios.post(url, params)
             .then(response => {
+                alert('1');
                 resolve(response.data);
             }, err => {
+                alert('2');
                 reject(err);
             })
             .catch((error) => {
@@ -50,7 +52,7 @@ export default {
      * 完成任务
      */
     Complete(params) {
-        return fetch('tasks/complete', params)
+        return fetch('devices/trouble', params)
     },
 
 

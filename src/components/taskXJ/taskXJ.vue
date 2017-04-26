@@ -20,7 +20,7 @@
         <div class="clearfix">
           <el-button v-show="btnGet" style="float: right; margin-left:20px;" type="primary" @click="reciveTask(item,'0')">领取</el-button>
           <el-button v-show="btnExcute" style="float: right;" type="primary" @click="excuteTask(item)">执行</el-button>
-          <el-button v-show="btnExcute" style="float: right;" type="primary" @click="refuseReson(item,'1')">拒绝</el-button>
+          <el-button v-show="btnGet" style="float: right;" type="primary" @click="refuseReson(item,'1')">拒绝</el-button>
           <el-button v-show="btnExcute" style="float: right;" type="primary" @click="path(item)">路线</el-button>
         </div>
       </el-card>
@@ -61,9 +61,8 @@ export default {
     {
        this.getTasks();
     }*/
-    //this.getToken(this.wxCode);
-    let wxCode='wwwwwww';
-    this.getToken(wxCode);
+
+    this.getToken(this.wxCode);
   },
   methods: {
     getToken(wxCode) {
@@ -86,36 +85,37 @@ export default {
       })
     },
     getTasks() {
-      // 获取待领取/待执行任务列表
-      let url = this.apiUrl + 'devices/2/list/01/nexec?token=' + this.token;
-      this.$http.get(url).then((response) => {
+      let vm = this;
+      // 获取待领取/待执行巡检任务列表
+      let taskstate = vm.$route.params.enterMenuFlg=='1'?'nexec':'ngot';
+      let url = vm.apiUrl + 'devices/2/list/01/'+ taskstate +'?token=' + vm.token;
+      vm.$http.get(url).then((response) => {
         if (response.data.respCode === "0000") {
-          this.tasksXJ = response.data.data;
+          vm.tasksXJ = response.data.data;
+          if (vm.$route.params.enterMenuFlg == '1') {
+            vm.btnExcute = true;
+            vm.btnGet = false;
+          } else {
+            vm.btnGet = true; // 领取
+            vm.btnExcute = false;
+          }
         }
       },(response) => {
         alert('处理失败');
       });
-      if (this.$route.params.taskTypFlg == '1') {
-        alert(1);
-        this.btnExcute = true;
-        this.btnGet = false;
-      } else {
-        alert(2);
-        this.btnGet = true; // 领取
-        this.btnExcute = false;
-      }
     },
     // 点击执行，显示提示框，用户确认是否进入地图进行导航
     excuteTask (item) {
       // let taskId = item.task_id;
       // bus.$emit('id-selected', taskId);
       // router.push('dingwei');
-      this.$router.push({ name: 'dingwei', params: { taskId: item.task_id, lon: item.longitude, lat: item.latitude}});
+      this.$router.push({ name: 'dingwei', params: { taskId: item.task_id, lon: item.longitude, lat: item.latitude,
+        standard: 'no', taskType: '01'}});
     },
     // stata=0 领取任务。发送后台标识即可
     reciveTask (item,stata) {
       let reciveuUrl = this.apiUrl + 'tasks/get?token=' + this.token;
-      this.$http.post(reciveuUrl, {task_id:item.task_id})
+      this.$http.post(reciveuUrl, {task_id: item.task_id})
       .then((response) => {
         if (response.data.respCode === "0000") {
           this.getTasks(); // 重新刷新列表

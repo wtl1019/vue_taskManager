@@ -23,7 +23,7 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
   .alert
-    z-index: 1000;
+    z-index: 1000
     .alert-wrap
       position: fixed
       width: 250px

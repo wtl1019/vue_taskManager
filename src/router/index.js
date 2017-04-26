@@ -2,30 +2,45 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import App from '../App';
 import MenuList from '../components/menuList/menuList';
-import TaskChk from '../components/taskChk/taskChk';
-import TaskXJ from '../components/taskXJ/taskXJ';
+import taskChk from '../components/taskChk/taskChk';
+import taskXJ from '../components/taskXJ/taskXJ';
 import navigation from '../components/map/navigation';
 import dingwei from '../components/map/dingwei';
 import taskMonitor from '../components/taskMonitor/taskMonitor';
 import devPosition from '../components/map/devPosition';
-import taskComplet from '../components/taskComplet/taskComplet';
+import taskXJComplete from '../components/taskComplet/taskXJComplete';
+import taskChckComplete from '../components/taskComplet/taskChckComplete';
+import faultPhotoUp from '../components/faultPhotoUp';
+
+// 引入子路由
+import Frame from '../components/frame/subroute.vue'
 
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/',
-    component: App,
+    path:'/',
+    component: App
+  },
+  {
+    name: 'MenuList',
+    path: '/menuList',
+    component: Frame,
     children: [
-      {path: '/menuList', name: 'MenuList', component: MenuList},
-      {path: '/taskChk/:taskTypFlg', name: 'TaskChk', component: TaskChk},
-      {path: '/taskXJ/:taskTypFlg', name: 'TaskXJ', component: TaskXJ},
+      {path: '/', name: 'MenuList', component: MenuList},
+      {path: '/taskChk/:enterMenuFlg', name: 'taskChk', component: taskChk},
+      {path: '/taskXJ/:enterMenuFlg', name: 'taskXJ', component: taskXJ},
       {path: '/navigation/:name,:lon,:lat', name: 'navigation', component: navigation},
-      {path: '/dingwei/:taskId,:lon,:lat', name: 'dingwei', component: dingwei},
-      {path: '/taskMonitor', name: 'taskMonitor', component: taskMonitor},
-      {path: '/devPosition', name: 'devPosition', component: devPosition},
-      {path: '/taskComplet/:taskId', name: 'taskComplet', component: taskComplet}
+      {path: '/dingwei/:taskId,:lon,:lat,:standard,:taskType', name: 'dingwei', component: dingwei},
+      {path: '/taskXJComplete/:taskId', name: 'taskXJComplete', component: taskXJComplete},
+      {path: '/taskChckComplete/:taskId,:standard', name: 'taskChckComplete', component: taskChckComplete},
+      {path: '/faultPhotoUp', name: 'faultPhotoUp', component: faultPhotoUp}
     ]
+  },
+  {
+    name: 'taskMonitor',
+    path: '/taskMonitor',
+    component: taskMonitor
   }
 ];
 const router = new VueRouter({

@@ -31,6 +31,8 @@ export default {
       task_Id: this.$route.params.taskId,
       lon: this.$route.params.lon,
       lat: this.$route.params.lat,
+      taskType: this.$route.params.taskType,
+      standard: this.$route.params.standard,
       center: [],
       currentGeolocation: [],
       plugin: [{
@@ -49,9 +51,9 @@ export default {
                 alert(result.position);
                 alert('4:'+self.timeCount);
               });  
-              self.timeCount=setTimeout(positionControl,60000);
+              self.timeCount = setTimeout(positionControl,60000);
             }
-            setTimeout(positionControl,6000);
+            self.timeCount = setTimeout(positionControl,0);
           },
           complete(GeolocationResult) {
             self.upPosition(GeolocationResult.position.lng, GeolocationResult.position.lat);
@@ -96,7 +98,14 @@ export default {
       clearTimeout(this.timeCount);
       alert('task_Id: ' + this.task_Id);
       // bus.$emit('taskId-select', this.taskId);
-      router.push({ name: 'taskComplet', params: { taskId: this.task_Id }});
+      //这里需要区分是检查还是巡检任务的完成页面
+      if(this.taskType == '02'){
+        router.push({ name: 'taskChckComplete', params: { taskId: this.task_Id, standard: this.standard}});
+      }
+      else {
+        router.push({ name: 'taskXJComplete', params: { taskId: this.task_Id}});
+      }
+
     },
     stopTask() {
       alert('取消');

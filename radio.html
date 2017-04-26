@@ -1,0 +1,200 @@
+<template>
+  <div>
+    <vheader></vheader>
+    <div class="wapper">
+      <!--<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+            <li v-for="standard in standardsArry">
+              <el-form-item :label="standard.name">
+              </el-form-item>
+              <el-form-item>
+                <el-radio-group v-model="standard.code">
+                  <el-radio :label="1">是</el-radio>
+                  <el-radio :label="0">否</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </li>-->
+          <!--
+            <el-form-item v-for="standard in standardsArry" :label="standard.name" :value="standard.code" v-model="ruleForm.standardSelect">
+              <el-radio-group>
+                <el-radio label="1" value="1">是</el-radio>
+                <el-radio label="0" value="0">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+              <el-button @click="resetForm('ruleForm')">重置</el-button>
+            </el-form-item>
+          -->
+          <!--
+          <div v-for="standard in standardsArry">
+            <div>
+              <h4>{{standard.name}}</h4>
+              <ul>
+                <li v-for="spec in specs">
+                  <label for="check_{{$parent.$index}}{{$index}}" class="text_checkbox">
+                    <input type="radio" name="check_select_{{$parent.$index}}" id="check_{{$parent.$index}}{{$index}}" :value="spec.id" v-model="checkedSpec">
+                    <span>{{ spec.name }}</span>
+                  </label>
+                </li>
+              </ul>
+            </div>
+          </div>
+          -->
+
+      <div class="content">
+        <div class="content-item" v-for="item in standardsArry">
+          <p class="qs-title">
+            {{item.code}}&nbsp;{{item.name}}
+          </p>
+          <p v-for="option in options" class="option">
+            <label>
+              <input type="radio" :name="`${item.code}-${item.name}`"
+              v-model="requiredItem[item.code]" :value="option.value">{{option.name}}
+            </label>
+          </p>
+        </div>
+      </div>
+    </div>
+    <footer>
+        <button @click="submitForm" class="submit">提交</button>
+    </footer>
+  </div>
+</template>
+
+<script>
+import vheader from '../header/header';
+import { mapGetters } from 'vuex';
+import api from '../../fetch/api';
+
+export default{
+  data () {
+    return {
+      checkedSpec: {},
+      options: [{name:'是',value:'1'},
+                {name:'否',value:'0'}],
+      task_Id: this.$route.params.taskId,
+      standardTyp: this.$route.params.standard,
+      standardsArry: [],
+      dialogImageUrl: '',
+      dialogVisible: false,
+      requiredItem: {},
+      ruleForm: {
+        task_Id: this.$route.params.taskId,
+        standardSelect: []
+      },
+      rules: {
+        standardSelect: [
+          { type: 'array', required: true, message: '请选择标准是否符合', trigger: 'change' }
+        ]
+      }
+    };
+  },
+  created () {
+    this.$store.dispatch('changeIndexConf',{
+      isBack: true,
+      title: '检查任务完成填写'
+    });
+    /*bus.$on('taskId-select', function(taskId) {
+      alert('taskId: '+taskId);
+      this.task_Id = taskId;
+    });*/
+    this.getStandarsArry(this.standardTyp);
+    alert('standardTyp:' + this.standardTyp)
+  },
+  mounted() {
+      this.getRequiredItem()
+  },
+  methods: {
+    getRequiredItem() {
+        this.standardsArry.forEach( item => {
+          if (true) {
+            this.requiredItem[item.code] = '';
+          }
+        } )
+    },
+    getStandarsArry(standardTyp) {
+      let standarsUrl = this.apiUrl + 'tasks/standards/' + standardTyp + '/?token=' + this.token;
+      alert('taskChckComplete/standarsUrl : ' + standarsUrl);
+      this.$http.get(standarsUrl).then((response) => {
+        if (response.data.respCode === "0000") {
+          this.standardsArry = response.data.data;
+          console.log(this.standardsArry);
+        }
+        else {
+          alert('getStandarsArry返回错误:' + response.data.respMsg);
+        }
+      },(response) => {
+        alert('处理失败');
+      });
+    },
+    submitForm(formName) {
+      alert(1);
+      let valid = this.validate();
+      if (valid) {
+        console.log(this.requiredItem);
+        var formData = JSON.stringify(this.requiredItem); // 这里才是你的表单数据
+        alert(formData);
+        let data = formData;
+        /*api.Complete(data)
+            .then(res => {
+              if(res.success) {
+                alert(3);
+                this.$router.replace('/menuList')
+              }
+            })
+            .catch(error => {
+              alert(error);
+              console.log(error)
+            })*/
+        } else {
+          alert('error submit!!');
+          return false;
+        }
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      alert('dialogImageUrl:' + this.dialogImageUrl);
+      this.dialogVisible = true;
+      alert('dialogVisible:' + this.dialogVisible);
+    },
+    resetForm(formName) {
+        this.$refs[formName].resetFields();
+    },
+    validate() {
+        for (let i in this.requiredItem) {
+          alert('validate');
+          alert(this.requiredItem[i].length);
+          if (this.requiredItem[i].length === 0)
+            return false
+        }
+          return true
+      }
+  },
+  computed: {
+    ...mapGetters([
+      'apiUrl',
+      'wxCode',
+      'token'
+    ])
+  },
+  components: {
+    vheader
+  }
+};
+</script>
+
+<style lang="stylus" rel="stylesheet/stylus">
+.wapper
+  width:96%
+  height:100%
+  margin:25px 2%
+  .el-form-item
+    .el-form-item__label
+      text-align: left
+      float: none
+  .unableTxt
+    width:87%
+</style>

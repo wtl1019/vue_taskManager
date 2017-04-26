@@ -42,42 +42,31 @@ export default {
   },
   created () {
     this.$store.dispatch('changeIndexConf',{
-      isBack: true,
+      isBack: false,
       title: '任务监控'
     });
-    alert(this.wxCode);
-    this.getToken(this.wxCode);
+    //不用传送微信code的方式，后端在调用该路径时会将token值跟在后面
+    this.getToken();
   },
   methods: {
-    getToken(wxCode) {
-      let tokenUrl = this.apiUrl + 'auth/token?code='+ wxCode;
-      alert('taskXJ//tokenUrl : '+tokenUrl);
-      this.$http({
-        method: 'GET',
-        url: tokenUrl,
-        data: {}
-      }).then((response) => {
-        if (response.data.respCode === "0000") {
-          this.$store.dispatch('setToken', response.data.data);
-          this.getTasks();
-        }
-        else {
-          alert('token返回错误:' + response.data.respMsg);
-        }
-      }, (response) => {
-        alert('处理失败');
-      })
+    getToken() {
+      var str = window.location.search;
+      var arr = str.replace('?','').split('&');
+      var token = arr[0].split('=')[1];
+
+      alert('token: '+ token);
+      this.$store.dispatch('setToken', token);
+      //alert('存储的wxCode: ' + this.wxCode);
+      this.getTasks();
     },
     getTasks() {
       // 获取待领取/待执行任务列表
       let url = this.apiUrl + 'devices/2/list/01/completed?token=' + this.token;
       this.$http.get(url).then((response) => {
         if (response.data.respCode === "0000") {
-          alert(1);
           this.tasksXJ = response.data.data;
         }
       },(response) => {
-        alert(2);
         alert(response.data.respCode);
         alert('处理失败');
       });

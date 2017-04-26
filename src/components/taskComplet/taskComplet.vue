@@ -5,8 +5,7 @@
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="服务方式" prop="serviceWay">
           <el-radio-group v-model="ruleForm.serviceWay">
-            <el-radio label="实地查看"></el-radio>
-            <el-radio label="调阅录像"></el-radio>
+            <el-radio name="serviceWay" v-for="serviceType in serviceTypeOptions" :label="serviceType.value">{{serviceType.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="终端类型" prop="devType">
@@ -16,8 +15,8 @@
           </el-select>
         </el-form-item>
         <el-form-item label="故障类型" prop="badType">
-          <el-checkbox-group class="badType" v-model="ruleForm.badType">
-            <el-checkbox v-for="item in options" :label="item.label"  :value="item.value" name="type"></el-checkbox>
+          <el-checkbox-group class="badType" id="selectedType" v-model="ruleForm.badType">
+            <el-checkbox v-for="badType in badTypeoptions" :label="badType.value" name="badType">{{badType.label}}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="完成日期" required>
@@ -60,7 +59,7 @@ export default{
       task_Id: this.$route.params.taskId,
       dialogImageUrl: '',
       dialogVisible: false,
-      options: [{
+      badTypeoptions: [{
           value: '01',
           label: '系统故障'
         }, {
@@ -79,6 +78,13 @@ export default{
           value: '06',
           label: 'ewrrewr'
         }],
+      serviceTypeOptions: [{
+          value: '1',
+          label: '实地查看'
+        }, {
+          value: '2',
+          label: '调阅录像'
+        }],
       devTypeOptions:  [{
           value: 'photo',
           label: '摄像机'
@@ -87,10 +93,11 @@ export default{
           label: '门卫室'
         }],
       ruleForm: {
-        serviceWay: '',
+        task_Id: this.$route.params.taskId,
+        serviceWay: [],
         devType: '',
         badType: [],
-        date: '',
+        date: new Date(),
         comment: '',
         upPhotoUrl: []
       },
@@ -105,13 +112,13 @@ export default{
           { type: 'array', required: true, message: '请至少选择一个故障类型', trigger: 'change' }
         ],
         serviceWay: [
-          { required: true, message: '请选择终端类型', trigger: 'change' }
+          { required: true, message: '请选择服务方式', trigger: 'change' }
         ],
         comment: [
           { required: true, message: '请填写异常备注', trigger: 'blur' }
         ],
         upPhotoUrl: [
-          { type: 'array', required: true, message: '请至少上传一张照片', trigger: 'change' }
+          { type: 'array', required: false, message: '请至少上传一张照片', trigger: 'change' }
         ]
       }
     };
@@ -132,41 +139,44 @@ export default{
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
+      alert('dialogImageUrl:' + this.dialogImageUrl);
       this.dialogVisible = true;
+      alert('dialogVisible:' + this.dialogVisible);
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!');
+          /*let badTypes = [];
+          var badType = document.getElementsByName("badType");
+          for (var i = 1; i < badType.length; i++) {
+            if (badType[i].checked)
+              badTypes.push(badType[i].value);
+          }
+          console.log(badTypes);*/
+
+          var formData = JSON.stringify(this.ruleForm); // 这里才是你的表单数据
+          alert(formData);
+          let data = formData;
+          api.Complete(data)
+            .then(res => {
+              if(res.success) {
+                alert(3);
+                this.$router.replace('/menuList')
+              }
+            })
+            .catch(error => {
+              alert(error);
+              console.log(error)
+            })
         } else {
-          console.log('error submit!!');
+          alert('error submit!!');
           return false;
         }
       });
     },
     resetForm(formName) {
         this.$refs[formName].resetFields();
-    },
-    submit() {
-      let data = {
-                task_Id: this.task_Id,
-                serviceWay: this.ruleForm.serviceWay,
-                devType: this.ruleForm.devType,
-                badType: this.ruleForm.badType,
-                date: this.ruleForm.date,
-                comment: this.ruleForm.comment,
-                upPhotoUrl: this.ruleForm.upPhotoUrl
-      }
-      api.Complete(data)
-        .then(res => {
-          if(res.success) {
-            this.$router.replace('/menuList')
-          }
-        })
-        .catch(error => {
-          console.log(error)
-        })
-      }
+    }
   },
   components: {
     vheader
