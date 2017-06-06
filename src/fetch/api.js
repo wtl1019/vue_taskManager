@@ -21,7 +21,7 @@ axios.interceptors.request.use((config) => {
 
 //返回状态判断
 axios.interceptors.response.use((res) =>{
-    if(!res.data.success){
+    if(res.data.respCode != "0000"){
         // _.toast(res.data.msg);
         return Promise.reject(res);
     }
@@ -33,26 +33,33 @@ axios.interceptors.response.use((res) =>{
 
 export function fetch(url, params) {
     return new Promise((resolve, reject) => {
-        axios.post(url, params)
+        axios.get(url, params)
             .then(response => {
-                alert('1');
-                resolve(response.data);
+              resolve(response);
             }, err => {
-                alert('2');
-                reject(err);
+              alert('err:'+err);
+              reject(err);
             })
             .catch((error) => {
-               reject(error)
+              alert('catch error');
+              reject(error)
             })
     })
 }
 
 export default {
+
+    fetchTasks(url) {
+        return fetch(url)
+    },
+    getWXConfig(url) {
+      return fetch(url)
+    },
     /**
      * 完成任务
      */
-    Complete(params) {
-        return fetch('devices/trouble', params)
+    CompleteTask(url,params) {
+        return fetch(url, params)
     },
 
 

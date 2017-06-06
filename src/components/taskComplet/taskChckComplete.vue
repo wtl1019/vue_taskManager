@@ -1,7 +1,6 @@
 <template>
   <div>
-    <vheader></vheader>
-    <div class="fill" v-if="!isError">
+    <div class="fill" v-if="isError">
       <!--<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
             <li v-for="standard in standardsArry">
               <el-form-item :label="standard.name">
@@ -40,21 +39,20 @@
             </div>
           </div>
           -->
-
       <div class="content">
         <div class="content-item" v-for="item in standardsArry">
           <p class="qs-title">
-            {{item.code}}&nbsp;{{item.name}}
+            {{item.id}}&nbsp;{{item.standard}}
           </p>
           <p v-for="option in options" class="option">
             <label>
-              <input type="radio" :name="`${item.code}-${item.name}`"
-              v-model="requiredItem[item.code]" :value="option.value">{{option.name}}
+              <input type="radio" :name="`${item.id}-${item.standard}`"
+              v-model="requiredItem[item.id]" :value="option.value">{{option.name}}
             </label>
           </p>
         </div>
-    </div>
-    <transition name="fade">
+      </div>
+      <transition name="fade">
         <div class="dialog" v-if="showDialog">
           <div class="submit-dialog" v-if="submitError">
             <header>
@@ -75,13 +73,11 @@
             <p>{{info}}</p>
           </div>
         </div>
-    </transition>
-    <footer>
+      </transition>
+      <footer>
         <button @click="submitForm" class="submit">提交</button>
-    </footer>
-  </div>
-  <div class="error" v-else>
-      404 Not Found
+        <button @click="quiteForm" class="submit">取消</button>
+      </footer>
   </div>
 </div>
 </template>
@@ -96,9 +92,8 @@ export default{
     return {
       checkedSpec: {},
       options: [{name:'是',value:'1'},
-                {name:'否',value:'0'}],
+                {name:'否',value:'2'}],
       task_Id: this.$route.params.taskId,
-      standardTyp: this.$route.params.standard,
       standardsArry: [],
       requiredItem: {},
       isError: false,
@@ -108,85 +103,143 @@ export default{
     };
   },
   created () {
-    this.$store.dispatch('changeIndexConf',{
+    /*this.$store.dispatch('changeIndexConf',{
       isBack: true,
       title: '检查任务完成填写'
-    });
-    /*bus.$on('taskId-select', function(taskId) {
-      alert('taskId: '+taskId);
-      this.task_Id = taskId;
     });*/
-    this.getStandarsArry(this.standardTyp);
-    alert('standardTyp:' + this.standardTyp)
-  },
-  mounted() {
-      this.getRequiredItem()
+    document.title = '检查任务完成填写';
+    //this.loadwxConfig();
+    this.getStandarsArry(this.task_Id);
   },
   methods: {
-    getRequiredItem() {
-        this.standardsArry.forEach( item => {
-          if (true) {
-            this.requiredItem[item.code] = '';
+    /*loadwxConfig() {
+      let vm = this;
+      let pageUrl = encodeURIComponent(document.URL.split('#')[0]);
+      alert('pageUrl:'+pageUrl);
+      let loadWXCofigurl= vm.apiUrl + 'wx/jssdk_sign/2'+'?token=' + vm.token+'&page='+pageUrl;
+      vm.$store.dispatch('FETCH_WX_CONFIG',loadWXCofigurl)
+        .then(()=>{
+          let wxConfig = vm.$store.getters.activeWXConfig;
+          wx.config({
+            debug: true,
+            appId: wxConfig.appId,
+            timestamp: parseInt(wxConfig.timestamp),
+            nonceStr: wxConfig.nonceStr,
+            signature: wxConfig.signature,
+            jsApiList: [
+              'getLocation',
+              'scanQRCode'
+            ]
+          });
+
+          wx.ready(function () {
+            wx.scanQRCode({
+            needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+            scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+            success: function(res) {
+            var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
           }
-        } )
+      });
+          });
+        })
+    },*/
+    getRequiredItem(arry) {
+      // alert('getRequiredItem');
+      // alert('this.standardsArry'+this.standardsArry);
+      arry.forEach( item => {
+        this.requiredItem[item.id] = '';
+      } )
+      this.$store.dispatch('setLoadingState', false);
     },
-    getStandarsArry(standardTyp) {
-      let standarsUrl = this.apiUrl + 'tasks/standards/' + standardTyp + '/?token=' + this.token;
-      alert('taskChckComplete/standarsUrl : ' + standarsUrl);
+    getStandarsArry(task_Id) {
+      // alert('getData');
+      let standarsUrl = this.apiUrl + 'tasks/standards/' + task_Id + '/?token=' + this.token;
+      // alert('taskChckComplete/standarsUrl : ' + standarsUrl);
+
+      this.$store.dispatch('setLoadingState', true);
+
       this.$http.get(standarsUrl).then((response) => {
         if (response.data.respCode === "0000") {
           this.standardsArry = response.data.data;
-          console.log(this.standardsArry);
+          this.isError = true;
+          this.getRequiredItem(this.standardsArry);
         }
         else {
           alert('getStandarsArry返回错误:' + response.data.respMsg);
         }
       },(response) => {
+        this.$store.dispatch('setLoadingState', false);
         alert('处理失败');
       });
     },
     submitForm(formName) {
       let resule = this.validate();
       if (resule) {
-        var formData = JSON.stringify(this.requiredItem); // 这里才是你的表单数据
-        alert(formData);
-        let data = formData;
-        this.showDialog = true;
-        this.submitError = false;
-        this.info = '提交成功！';
-        setTimeout(() => {
-          this.showDialog = false;
-        }, 1000);
-        setTimeout(() => {
-          //this.$router.push({path: '/'});
-          history.go(-1);
-        }, 2000);
-        /*api.Complete(data)
-            .then(res => {
-              if(res.success) {
-                alert(3);
-                this.$router.replace('/menuList')
-              }
-            })
-            .catch(error => {
-              alert(error);
-              console.log(error)
-            })*/
-        } else {
+        var formData = new FormData();
+        formData.append("task_id", this.task_Id);
+        formData.append("type", '');
+        formData.append("describe", '');
+        formData.append("file1", '');
+        formData.append("is_trouble", '0');
+        formData.append("data", JSON.stringify(this.requiredItem));
+
+        // var formData = JSON.stringify(this.requiredItem); // 这里才是你的表单数据
+
+        /*{
+            device_id: this.device_id,
+            task_id: this.task_Id,
+            type: '',
+            describe: '',
+            file1: '',
+            is_trouble: '0',
+            data: formData
+          }*/
+
+        let faultUrl = this.apiUrl + 'tasks/completeJC?token=' + this.token;
+
+        this.$store.dispatch('setLoadingState', true);
+
+        this.$http.post(faultUrl, formData).then((response) => {
+          if (response.data.respCode === "0000") {
+            this.$store.dispatch('setLoadingState', false);
+            this.showDialog = true;
+            this.submitError = false;
+            this.info = '提交成功！';
+            setTimeout(() => {
+              this.showDialog = false;
+            }, 1000);
+            setTimeout(() => {
+              this.$router.push({path: '/taskChk'});
+            }, 2000);
+          }
+          else {
+            this.$store.dispatch('setLoadingState', false);
+            this.showDialog = true;
+            this.submitError = false;
+            this.info = response.data.respMsg;
+          }
+        }, (response) => {
+          this.$store.dispatch('setLoadingState', false);
+          alert('处理失败');
+        });
+      } else {
           this.showDialog = true;
           this.submitError = true;
-          this.info = '提交失败！ 存在必填项未填';
-        }
+          this.info = '提交失败！ 存在必选项未选';
+      }
     },
     validate() {
-      console.log(this.requiredItem);
-      alert("validate/this.requiredItem:"+this.requiredItem);
+      // alert('validate');
       for (let i in this.requiredItem) {
-        alert('this.requiredItem[i]:'+this.requiredItem[i]);
+        // alert('this.requiredItem[i]:'+this.requiredItem[i]);
         if (this.requiredItem[i].length === 0)
           return false;
         }
       return true;
+    },
+    quiteForm() {
+      //this.$router.push({path: '/menuList'});
+      history.go(-1);
     }
   },
   computed: {
@@ -263,34 +316,37 @@ export default{
       width: 80%
       height: 30%
       transform: translateX(-50%) translateY(-50%)
-      border-radius: .5rem
+      border-radius: 10px
       box-shadow: 0 0 5px #555
       background-color: #fff
-    header
-      height: 30%
-      padding-left: 10%
-      line-height: 5rem
-      border-radius: .5rem
-      background-color: #f7f7f7
-      span
-        font-weight: 700
-      .close-btn
-        position: absolute
-        right: 10%
-        color: #bbb
-        cursor: pointer
-        &:hover
-          color: #ee7419
-    .submit-dialog p
-      margin-top: 3rem
-      margin-left: 3rem
+      header
+        height: 30%
+        padding-left: 10%
+        line-height: 5rem
+        border-radius: .5rem
+        background-color: #f7f7f7
+        span
+          font-weight: 700
+        .close-btn
+          position: absolute
+          right: 10%
+          color: #bbb
+          cursor: pointer
+          &:hover
+            color: #ee7419
+      p
+        width:100%
+        height:30%
+        line-height:40px
+        margin:10px auto 0 auto
+        text-align:center
     .btn-box
       position: absolute
       bottom: 0
       width: 100%
       height: 6rem
-      text-align: center
       line-height: 6rem
+      text-align: center
       button
         width: 7rem;
         height: 2.5rem;

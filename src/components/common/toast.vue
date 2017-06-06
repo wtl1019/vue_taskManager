@@ -29,8 +29,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-@import '../assets/css/function';
+<style lang="stylus" rel="stylesheet/stylus">
 
 .toast {
     z-index: 100;

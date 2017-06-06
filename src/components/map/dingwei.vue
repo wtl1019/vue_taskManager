@@ -1,13 +1,16 @@
 <template>
   <div>
-    <vheader></vheader>
     <transition name="move">
       <div id="location" class="location-wrapper" :center="center">
         <el-amap vid="amap" :plugin="plugin">
         </el-amap>
-        <div class="btn">
-          <el-button style="float: right; margin-left:20px;" type="primary" @click="completeTask">完成任务</el-button>
-          <el-button style="float: right; margin-left:20px;" type="primary" @click="stopTask">取消执行</el-button>
+        <!--<div class="btn">
+          <el-button style="float: right; margin-left:20px;" type="primary" @click="completeTask">提交任务</el-button>
+          <el-button style="float: right; margin-left:20px;" type="primary" @click="stopTask">取消任务</el-button>
+        </div>-->
+        <div class="btn-wrapper">
+          <div class="btn-common btn-stop" @click="stopTask">取消任务</div>
+          <div class="btn-common btn-complete" @click="completeTask">提交任务</div>
         </div>
       </div>
     </transition>
@@ -19,16 +22,12 @@ import router from '../../router';
 import bus from '../../common/js/bus.js';
 import { mapGetters } from 'vuex';
 export default {
-  props: {
-    task: {
-      type: Object
-    }
-  },
-  data() {
+  data: function () {
     let self = this;
     return {
       timeCount: '',
       task_Id: this.$route.params.taskId,
+      device_id: this.$route.params.devId,
       lon: this.$route.params.lon,
       lat: this.$route.params.lat,
       taskType: this.$route.params.taskType,
@@ -41,23 +40,21 @@ export default {
         zoomToAccuracy: true,
         events: {
           init(instance) {
-            alert('1:'+self.timeCount);
             function positionControl() {
-              alert('2:jin positionControl方法内');
+              //alert('2:jin positionControl方法内');
               instance.getCurrentPosition((status, result) => {
-                alert('3:jin getCurrentPosition方法内');
+                //alert('3:jin getCurrentPosition方法内');
                 // 获取当前的位置信息
                 self.center = [result.position.lng, result.position.lat];
-                alert(result.position);
-                alert('4:'+self.timeCount);
+                //alert('4:'+self.timeCount);
               });  
+
               self.timeCount = setTimeout(positionControl,60000);
             }
-            self.timeCount = setTimeout(positionControl,0);
+            self.timeCount = setTimeout(positionControl,1000);
           },
           complete(GeolocationResult) {
             self.upPosition(GeolocationResult.position.lng, GeolocationResult.position.lat);
-            alert("定位成功");
           },
           error(GeolocationError) {
             alert('定位失败');
@@ -69,10 +66,11 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch('changeIndexConf',{
+    /*this.$store.dispatch('changeIndexConf',{
       isBack: true,
       title: '当前定位'
-    });
+    });*/
+    document.title = '当前位置';
     /*bus.$on('id-selected', function(taskId) {
       alert('taskId: ' + taskId);
       this.task_Id = taskId;
@@ -81,34 +79,35 @@ export default {
   methods: {
     upPosition(lon,lat) {
       let upPositionUrl = this.apiUrl + 'locations?token=' + this.token;
-      alert('upPositionUrl' + upPositionUrl);
-      this.$http.post(upPositionUrl, {task_id: this.task_Id, lon: this.lon, lat: this.lat})
+      //alert('upPositionUrl' + upPositionUrl);
+
+      this.$http.post(upPositionUrl, {task_id: this.task_Id, device_id: this.device_id, lon: lon, lat: lat})
       .then((response) => {
         if (response.data.respCode === "0000") {
-          alert('上传成功');
+          //alert('上传成功');
         }
       }, (response) => {
-        alert(response.data.respCode);
-        alert(response.data.respMsg);
-        alert('处理失败');
+        // alert(response.data.respCode);
+        // alert(response.data.respMsg);
+        alert('上传处理失败');
       });
     },
     completeTask() {
-      alert('5 quxiao timeCount:' + this.timeCount);
+      //alert('5 quxiao timeCount:' + this.timeCount);
       clearTimeout(this.timeCount);
-      alert('task_Id: ' + this.task_Id);
+      //alert('task_Id: ' + this.task_Id);
       // bus.$emit('taskId-select', this.taskId);
       //这里需要区分是检查还是巡检任务的完成页面
       if(this.taskType == '02'){
-        router.push({ name: 'taskChckComplete', params: { taskId: this.task_Id, standard: this.standard}});
+        router.push({ name: 'taskChckComplete', params: { taskId: this.task_Id, devId: this.device_id, standard: this.standard}});
       }
       else {
-        router.push({ name: 'taskXJComplete', params: { taskId: this.task_Id}});
+        router.push({ name: 'taskXJComplete', params: { taskId: this.task_Id, devId: this.device_id}});
       }
 
     },
     stopTask() {
-      alert('取消');
+      //alert('取消');
       clearTimeout(this.timeCount);
       let stopTaskUrl = this.apiUrl + 'tasks/cancel?token=' + this.token;
       this.$http.post(stopTaskUrl, {task_id: this.task_Id ,describe: ''})
@@ -118,9 +117,9 @@ export default {
           history.go(-1);
         }
       }, (response) => {
-        alert(response.data.respCode);
-        alert(response.data.respMsg);
-        alert('取消失败');
+        //alert(response.data.respCode);
+        //alert(response.data.respMsg);
+        alert('取消处理失败');
       });
     }
   },
@@ -141,7 +140,7 @@ export default {
 <style lang="stylus" rel="stylesheet/stylus">
 .location-wrapper
     position: fixed
-    top: 50px
+    top: 0px
     left: 0
     bottom: 0
     width:100%
@@ -150,9 +149,21 @@ export default {
       transition:all 0.3 linear
     &.move-enter,&.move-leave-active
       transform:translate3d(100%,0,0)
-    .btn
+    .btn-wrapper
       position:absolute
       top:60px
-      left:60px
       z-index:40
+      width:100%
+      text-align:center
+      .btn-common
+        display:inline-block
+        border:1px solid #fff
+        padding:10px 15px
+        border-radius:10px
+        color:#fff
+        font-size:15px
+      .btn-complete
+        background-color:#34C44B
+      .btn-stop
+        background-color:#DF9D3F
 </style>

@@ -30,10 +30,15 @@ export default {
       showFlag: false,
       zoom: 12,
       amapManager: amapManager,
-      center:  [116.397128,39.916527],
+      center:  [126.62295,45.77236],
       polyline: {
         vid: POLYGON_ID,
-        path: [],
+        path: [[126.62295,45.77236],
+               [126.62809,45.77285],
+               [126.69343,45.74043],
+               [126.63249,45.74764],
+               [126.69182,45.73434],
+               [126.69396,45.72983]],
         events: {
           click(e) {
             alert('click polyline');
@@ -49,26 +54,35 @@ export default {
       }
     };
   },
+  created () {
+    document.title = '轨迹查看';
+  },
   methods: {
     show(task) {
-      this.getPath(task);
+      //this.getPath(task);
+      this.showFlag = true;
     },
-    getPath(task) {
-      let getPathsUrl = this.apiUrl + 'locations/' + task.task_id +'?token=' + this.token;
-      alert(getPathsUrl);
+    /*getPath(task) {
+      let getPathsUrl = this.apiUrl + 'locations/' + task.task_id + '/'+task.device_id + '?token=' + this.token;
+
+      this.$store.dispatch('setLoadingState', true);
+
       this.$http.get(getPathsUrl)
       .then((response) => {
           let index = Math.floor((response.data.data.length)/2);
           if (response.data.respCode === "0000") {
             this.polyline["path"] = response.data.data;
-            // this.center = response.data.data[index];
+            //alert('this.polyline.path[0]:'+this.polyline.path[0]);
+            //this.center = this.polyline.path[0];
             this.showFlag = true;
+            this.$store.dispatch('setLoadingState', false);
           }
         },(response) => {
-        alert(response.data.respMsg);
+        // alert(response.data.respMsg);
         alert('获取路线失败');
+        this.$store.dispatch('setLoadingState', false);
       });
-    },
+    },*/
     hide() {
       this.showFlag = false;
     }

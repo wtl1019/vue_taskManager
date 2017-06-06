@@ -1,30 +1,23 @@
 <template>
+<div>
   <div id="subroute">
     <transition name="fade">
       <router-view class="child-view"></router-view>
     </transition>
   </div>
+</div>
 </template>
 
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/ecmascript-6">
-import vheader from '../header/header';
-import valert from '../common/alert';
-import { mapGetters } from 'vuex';
-
 export default {
   data() {
     return {
     };
   },
-  computed: {
-    ...mapGetters([
-      'showAlert',
-      'wxCode'
-    ])
+  mounted(){
   },
-  components: {
-    vheader,
-    valert
+  methods: {
   }
 };
 </script>

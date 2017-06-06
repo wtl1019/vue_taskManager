@@ -11,6 +11,15 @@ import devPosition from '../components/map/devPosition';
 import taskXJComplete from '../components/taskComplet/taskXJComplete';
 import taskChckComplete from '../components/taskComplet/taskChckComplete';
 import faultPhotoUp from '../components/faultPhotoUp';
+import tasksQry from '../components/tasksQry/tasksQry';
+
+import User from '../components/User/User';
+import UserTask from '../components/User/UserTask';
+import TaskDetail from '../components/User/TaskDetail';
+
+import Terminal from '../components/Terminal/Terminal';
+import TerDetail from '../components/Terminal/TerDetail';
+import location from '../components/Terminal/location';
 
 // 引入子路由
 import Frame from '../components/frame/subroute.vue'
@@ -20,7 +29,7 @@ Vue.use(VueRouter);
 const routes = [
   {
     path:'/',
-    component: App
+    component: faultPhotoUp
   },
   {
     name: 'MenuList',
@@ -28,20 +37,56 @@ const routes = [
     component: Frame,
     children: [
       {path: '/', name: 'MenuList', component: MenuList},
-      {path: '/taskChk/:enterMenuFlg', name: 'taskChk', component: taskChk},
+      {path: '/taskChk', name: 'taskChk', component: taskChk},
       {path: '/taskXJ/:enterMenuFlg', name: 'taskXJ', component: taskXJ},
       {path: '/navigation/:name,:lon,:lat', name: 'navigation', component: navigation},
-      {path: '/dingwei/:taskId,:lon,:lat,:standard,:taskType', name: 'dingwei', component: dingwei},
-      {path: '/taskXJComplete/:taskId', name: 'taskXJComplete', component: taskXJComplete},
-      {path: '/taskChckComplete/:taskId,:standard', name: 'taskChckComplete', component: taskChckComplete},
-      {path: '/faultPhotoUp', name: 'faultPhotoUp', component: faultPhotoUp}
+      {path: '/dingwei/:taskId,:devId,:lon,:lat,:taskType', name: 'dingwei', component: dingwei},
+      {path: '/taskXJComplete/:taskId,:devId', name: 'taskXJComplete', component: taskXJComplete},
+      {path: '/taskChckComplete/:taskId', name: 'taskChckComplete', component: taskChckComplete},
+      {path: '/faultPhotoUp', name: 'faultPhotoUp', component: faultPhotoUp},
+      {path: '/taskMonitor', name: 'taskMonitor', component: taskMonitor}
     ]
   },
   {
     name: 'taskMonitor',
     path: '/taskMonitor',
     component: taskMonitor
-  }
+  },
+  {
+    name: 'tasksQry',
+    path: '/tasksQry',
+    component: tasksQry
+  },
+  {path: '/Terminal', component: Terminal},
+  {path: '/UserTask', component: UserTask},
+  {path: '/TaskDetail/:id', component: TaskDetail,name:'TaskDetail'},
+  {path: '/TerDetail/:id', component: TerDetail,name:'TerDetail'},
+  {path: '/location/:id', component: location,name:'location'},
+  {path: '/User', component: User, name: 'User'}
+  /*{
+    name: 'User',
+    path: '/User',
+    component: User
+  },
+  {
+    name: 'UserTask',
+    path: '/UserTask',
+    component: Frame,
+    children: [
+    {path: '/', name: 'UserTask', component: UserTask},
+    {path: '/TaskDetail/:id', component: TaskDetail,name:'TaskDetail'}
+    ]
+  },
+  {
+    name: 'Terminal',
+    path: '/Terminal',
+    component: Frame,
+    children: [
+    {path: '/', name: 'Terminal', component: Terminal},
+    {path: '/TerDetail/:id', component: TerDetail,name:'TerDetail'},
+    {path: '/location/:id', component: location,name:'location'}
+    ]
+  }*/
 ];
 const router = new VueRouter({
   routes: routes, // short for routes: routes

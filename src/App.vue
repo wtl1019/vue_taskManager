@@ -1,41 +1,47 @@
 <template>
   <div id="app">
+    <vtoast v-show="showToast"></vtoast>
+    <valert v-show="showAlert"></valert>
+    <vloading v-show="loading"></vloading>
+
+    <!--<vheader></vheader>-->
     <transition name="fade">
       <router-view class="child-view"></router-view>
     </transition>
+    <vcondition></vcondition>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import vheader from './components/header/header';
+import vcondition from './components/condition';
 import valert from './components/common/alert';
-import { mapGetters } from 'vuex';
+import vtoast from './components/common/toast';
+import vloading from './components/common/loading';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   data() {
     return {
     };
   },
-  mounted(){
-    // this.getPath();
-  },
   methods: {
-    /*getPath () {
-        if (this.$route.name === undefined)
-        {
-          this.$router.push('menuList');
-        }
-    }*/
   },
   computed: {
     ...mapGetters([
       'showAlert',
-      'wxCode'
+      'wxCode',
+      'loading',
+      'showToast',
+      'showAlert'
     ])
   },
   components: {
     vheader,
-    valert
+    vcondition,
+    valert,
+    vtoast,
+    vloading
   }
 };
 </script>

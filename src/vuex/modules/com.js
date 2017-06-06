@@ -19,7 +19,7 @@ const state = {
     token: '',
     indexConf: {
       isBack: true,  // 是否显示返回
-      title: '菜单' // 标题
+      title: '' // 标题
     },
     taskAddress: {
       name: '',
@@ -94,7 +94,8 @@ const getters = {
     apiUrl: state => state.apiUrl,
     wxCode: state => state.wxCode,
     token: state => state.token,
-    taskAddress: state => state.taskAddress
+    taskAddress: state => state.taskAddress,
+    leftNavStatus: state => state.leftNavStatus
 }
 
 
