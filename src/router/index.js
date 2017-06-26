@@ -1,98 +1,103 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
 import App from '../App';
-import MenuList from '../components/menuList/menuList';
-import taskChk from '../components/taskChk/taskChk';
-import taskXJ from '../components/taskXJ/taskXJ';
-import navigation from '../components/map/navigation';
-import dingwei from '../components/map/dingwei';
-import taskMonitor from '../components/taskMonitor/taskMonitor';
-import devPosition from '../components/map/devPosition';
-import taskXJComplete from '../components/taskComplet/taskXJComplete';
-import taskChckComplete from '../components/taskComplet/taskChckComplete';
-import faultPhotoUp from '../components/faultPhotoUp';
-import tasksQry from '../components/tasksQry/tasksQry';
+import Vue from 'vue';
 
-import User from '../components/User/User';
-import UserTask from '../components/User/UserTask';
-import TaskDetail from '../components/User/TaskDetail';
+const menuList = r => require.ensure([], () => r(require('../components/menuList/menuList')), 'menuList')
 
-import Terminal from '../components/Terminal/Terminal';
-import TerDetail from '../components/Terminal/TerDetail';
-import location from '../components/Terminal/location';
+const taskChk = r => require.ensure([], () => r(require('../components/taskChk/taskChk')), 'taskChk')
+const taskXJ = r => require.ensure([], () => r(require('../components/taskXJ/taskXJ')), 'taskXJ')
+const taskMonitor = r => require.ensure([], () => r(require('../components/taskMonitor/taskMonitor')), 'taskMonitor')
 
-// 引入子路由
-import Frame from '../components/frame/subroute.vue'
+const navigation = r => require.ensure([], () => r(require('../components/map/navigation')), 'navigation')
+const dingwei = r => require.ensure([], () => r(require('../components/map/dingwei')), 'dingwei')
+const dingwei_test = r => require.ensure([], () => r(require('../components/map/dingwei_test')), 'dingwei_test')
 
-Vue.use(VueRouter);
+const taskXJComplete = r => require.ensure([], () => r(require('../components/taskComplet/taskXJComplete')), 'taskXJComplete')
+const taskChckComplete = r => require.ensure([], () => r(require('../components/taskComplet/taskChckComplete')), 'taskChckComplete')
+
+const User = r => require.ensure([], () => r(require('../components/User/User')), 'User')
+const UserTask = r => require.ensure([], () => r(require('../components/User/UserTask')), 'UserTask')
+const TaskDetail = r => require.ensure([], () => r(require('../components/User/TaskDetail')), 'TaskDetail')
+
+const Terminal = r => require.ensure([], () => r(require('../components/Terminal/Terminal')), 'Terminal')
+const TerDetail = r => require.ensure([], () => r(require('../components/Terminal/TerDetail')), 'TerDetail')
+const location = r => require.ensure([], () => r(require('../components/Terminal/location')), 'location')
 
 const routes = [
-  {
-    path:'/',
-    component: faultPhotoUp
-  },
-  {
-    name: 'MenuList',
-    path: '/menuList',
-    component: Frame,
-    children: [
-      {path: '/', name: 'MenuList', component: MenuList},
-      {path: '/taskChk', name: 'taskChk', component: taskChk},
-      {path: '/taskXJ/:enterMenuFlg', name: 'taskXJ', component: taskXJ},
-      {path: '/navigation/:name,:lon,:lat', name: 'navigation', component: navigation},
-      {path: '/dingwei/:taskId,:devId,:lon,:lat,:taskType', name: 'dingwei', component: dingwei},
-      {path: '/taskXJComplete/:taskId,:devId', name: 'taskXJComplete', component: taskXJComplete},
-      {path: '/taskChckComplete/:taskId', name: 'taskChckComplete', component: taskChckComplete},
-      {path: '/faultPhotoUp', name: 'faultPhotoUp', component: faultPhotoUp},
-      {path: '/taskMonitor', name: 'taskMonitor', component: taskMonitor}
+      //菜单页
+      {
+        path: '/menuList',
+        component: menuList,
+        children: [{
+          name: 'taskChk',
+          path: '/taskChk',
+          component: taskChk
+        }, {
+          name: 'taskXJ',
+          path: '/taskXJ',
+          component: taskXJ
+        }, {
+          path: '/navigation/:name,:lon,:lat',
+          name: 'navigation',
+          component: navigation
+        }, {
+          name: 'dingwei',
+          path: '/dingwei/:taskId,:devId,:lon,:lat,:taskType',
+          component: dingwei
+        }, {
+          name: '/dingwei_test',
+          path: '/dingwei_test',
+          component: dingwei_test
+        }, {
+          name: 'taskXJComplete',
+          path: '/taskXJComplete/:taskId,:devId',
+          component: taskXJComplete
+        }, {
+          path: '/taskChckComplete/:taskId',
+          component: taskChckComplete
+        }, {
+          name: 'taskMonitor',
+          path: '/taskMonitor',
+          component: taskMonitor
+        }]
+      },
+      {
+        name: 'taskMonitor',
+        path: '/taskMonitor',
+        component: taskMonitor
+      }, 
+      {
+        name: 'Terminal',
+        path: '/Terminal',
+        component: Terminal
+      }, 
+      {
+        name: 'UserTask',
+        path: '/UserTask',
+        component: UserTask
+      }, 
+      {
+        name: 'TaskDetail',
+        path: '/TaskDetail/:id',
+        component: TaskDetail
+      }, 
+      {
+        name: 'TerDetail',
+        path: '/TerDetail/:id',
+        component: TerDetail
+      }, 
+      {
+        name: 'location',
+        path: '/location/:id',
+        component: location
+      }, 
+      {
+        name: 'User',
+        path: '/User',
+        component: User
+      }
     ]
-  },
-  {
-    name: 'taskMonitor',
-    path: '/taskMonitor',
-    component: taskMonitor
-  },
-  {
-    name: 'tasksQry',
-    path: '/tasksQry',
-    component: tasksQry
-  },
-  {path: '/Terminal', component: Terminal},
-  {path: '/UserTask', component: UserTask},
-  {path: '/TaskDetail/:id', component: TaskDetail,name:'TaskDetail'},
-  {path: '/TerDetail/:id', component: TerDetail,name:'TerDetail'},
-  {path: '/location/:id', component: location,name:'location'},
-  {path: '/User', component: User, name: 'User'}
-  /*{
-    name: 'User',
-    path: '/User',
-    component: User
-  },
-  {
-    name: 'UserTask',
-    path: '/UserTask',
-    component: Frame,
-    children: [
-    {path: '/', name: 'UserTask', component: UserTask},
-    {path: '/TaskDetail/:id', component: TaskDetail,name:'TaskDetail'}
-    ]
-  },
-  {
-    name: 'Terminal',
-    path: '/Terminal',
-    component: Frame,
-    children: [
-    {path: '/', name: 'Terminal', component: Terminal},
-    {path: '/TerDetail/:id', component: TerDetail,name:'TerDetail'},
-    {path: '/location/:id', component: location,name:'location'}
-    ]
-  }*/
-];
-const router = new VueRouter({
-  routes: routes, // short for routes: routes
-  linkActiveClass: 'active',  // router-link的选中状态的class，也有一个默认的值
-  history: true
-});
+
+export default routes;
 
 // 判断用户是否已登陆，此时由 router 进行一个拦截
 /* router.beforeEach(function (to, from, next) {
@@ -104,5 +109,3 @@ const router = new VueRouter({
   }
   next();
 }); */
-
-export default router;

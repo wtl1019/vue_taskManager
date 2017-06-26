@@ -52,6 +52,9 @@ export default {
     fetchTasks(url) {
         return fetch(url)
     },
+    fetchToken(url) {
+        return fetch(url)
+    },
     getWXConfig(url) {
       return fetch(url)
     },
@@ -60,55 +63,5 @@ export default {
      */
     CompleteTask(url,params) {
         return fetch(url, params)
-    },
-
-
-    SportsList() {
-        return fetch('/api/sportList')
-    },
-
-
-    TravelsList() {
-        return fetch('/api/travelList')
-    },
-
-
-    SportsDetail(id) {
-        return fetch('/api/sportDetail', {sportId: id})
-    },
-
-
-    TravelsDetail(id) {
-        return fetch('/api/travelDetail', {travelId: id})
-    },
-
-
-    travelClicks(id) {
-        return fetch('/api/travelClickNum', {travelId: id})
-    },
-
-
-    UserInfo(id) {
-        return fetch('/users/api/userInfo', {userId: id})
-    },
-
-
-     getPubTotravelNum(id) {
-         return fetch('/users/api/getPubTotravelNum', {userId: id})
-     },
-
-
-    getMyTravel(id) {
-          return fetch('/users/api/myTravel', {userId: id})
-      },
-
-
-    PostTravel(params) {
-        return fetch()
-    },
-
-
-     getAddressJson() {
-         return fetch('/api/address')
-     }
+    }
 }

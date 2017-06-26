@@ -1,39 +1,40 @@
 <template>
   <div class="wrapper">
-  <div class="block">
-    <div class="block-title">巡检任务</div>
-    <div class="content">
-      <router-link :to="{  name: 'taskXJ', params: { enterMenuFlg: '0'}}">
-        <div class="little-block">
-          <img src="./pic2.png" alt="" class="l-img">
-          <div class="msg">领取任务</div>
-        </div>
-      </router-link>
-      <router-link :to="{  name: 'taskXJ', params: { enterMenuFlg: '1'}}">
-        <div class="little-block">
-          <img src="./pic3.png" alt="" class="l-img">
-          <div class="msg">执行任务</div>
-        </div>
-      </router-link>
-      <router-link :to="{  name: 'taskMonitor'}">
-        <div class="little-block">
-          <img src="./pic1.png" alt="" class="l-img">
-          <div class="msg">轨迹查看</div>
-        </div>
-      </router-link>
+    <div class="block">
+      <div class="block-title">巡检任务</div>
+      <div class="content">
+        <router-link :to="{  name: 'taskXJ', query: { enterMenuFlg: '0'}}">
+          <div class="little-block">
+            <img src="./pic2.png" alt="" class="l-img">
+            <div class="msg">领取任务</div>
+          </div>
+        </router-link>
+        <router-link :to="{  path: '/menuList/taskXJ', query: { enterMenuFlg: '1'}}">
+          <div class="little-block">
+            <img src="./pic3.png" alt="" class="l-img">
+            <div class="msg">执行任务</div>
+          </div>
+        </router-link>
+        <router-link to="/taskMonitor">
+          <div class="little-block">
+            <img src="./pic1.png" alt="" class="l-img">
+            <div class="msg">轨迹查看</div>
+          </div>
+        </router-link>
+      </div>
     </div>
-  </div>
-  <div class="block">
-    <div class="block-title">检查任务</div>
-    <div class="content">
-      <router-link :to="{  name: 'taskChk'}">
-        <div class="little-block">
-          <img src="./pic3.png" alt="" class="l-img">
-          <div class="msg">执行任务</div>
-        </div>
-      </router-link>
+    <div class="block">
+      <div class="block-title">检查任务</div>
+      <div class="content">
+        <router-link :to="{  name: 'taskChk'}">
+          <div class="little-block">
+            <img src="./pic3.png" alt="" class="l-img">
+            <div class="msg">执行任务</div>
+          </div>
+        </router-link>
+      </div>
     </div>
-  </div>
+    <router-view></router-view>
 </div>
 </template>
 
@@ -42,6 +43,7 @@ import vheader from '../header/header';
 import * as _ from '../../util/tool';
 import { mapActions } from 'vuex';
 import { mapGetters } from 'vuex';
+import api from '../../fetch/api';
 
 export default {
   data: function () {
@@ -55,35 +57,28 @@ export default {
       title: '菜单'
     });*/
     document.title = '菜单';
-    this.getToken();
+    //this.getToken();
   },
   methods: {
-    /*getCode() {
-      var str = window.location.search;
-      var arr = str.replace('?','').split('&');
-      this.enterMenuFlg = arr[1].split('=')[1];
-      var wxCode = arr[0].split('=')[1];
-
-      // 本地调试写死 0 领取 1 执行
-      //this.enterMenuFlg = '0';
-      var wxCode = 'qweqew';
-
-      // alert('enterMenuFlg:'+this.enterMenuFlg);
-      //alert('wxCode: '+ wxCode);
-      this.$store.dispatch('setWxCode', wxCode);
-      //alert('存储的wxCode: ' + this.wxCode);
-    },*/
     getToken() {
+      this.$store.dispatch('setLoadingState', true);
       //生产
-      var str = window.location.search;
-      var arr = str.replace('?','').split('&');
-      //this.enterMenuFlg = arr[0].split('=')[1];
-      //alert('enterMenuFlg:'+this.enterMenuFlg);
-      var token = arr[0].split('=')[1];
-      //alert('token: '+ token);
-      this.$store.dispatch('setToken', token);
-      //alert('存储的token:'+this.token);
-      //this.loadwxConfig();
+      let tokenUrl = 'auth/token?code=wangtianli';
+
+      api.fetchToken(tokenUrl).then(res => {
+          if (res.data.respCode == "0000") {
+            this.$store.dispatch('setToken', response.data.data);
+            this.$store.dispatch('setLoadingState', false);
+          }
+          else {
+            alert('token返回错误:' + response.data.respMsg);
+            this.$store.dispatch('setLoadingState', false);
+        }
+        })
+        .catch(error => {
+          this.$store.dispatch('setLoadingState', false);
+          console.log(error);
+        })
     },
     loadwxConfig() {
       let vm = this;
@@ -142,5 +137,12 @@ export default {
 }
 .msg {
   margin-top: 10px;
+}
+.router-slid-enter-active, .router-slid-leave-active {
+  transition: all .4s;
+}
+.router-slid-enter, .router-slid-leave-active {
+  transform: translate3d(2rem, 0, 0);
+  opacity: 0;
 }
 </style>
