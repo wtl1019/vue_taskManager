@@ -25,7 +25,8 @@ const location = r => require.ensure([], () => r(require('../components/Terminal
 const routes = [
       //菜单页
       {
-        path: '/menuList',
+        name:'menuList',
+        path: '/',
         component: menuList,
         children: [{
           name: 'taskChk',
